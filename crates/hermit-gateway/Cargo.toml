@@ -1,0 +1,20 @@
+[package]
+name = "hermit-gateway"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "Horizon TAP v2 (GraphTally) payment gateway for Hermit Data Service, with per-endpoint pricing. Built on horizon-core."
+
+[[bin]]
+name = "hermit-gateway"
+path = "src/main.rs"
+
+[dependencies]
+horizon-core = { git = "https://github.com/lodestar-team/horizon-core", branch = "main" }
+# axum::Router::new() is passed to run_with as the (empty) custom-route set.
+axum = { version = "0.8" }
+tokio = { version = "1", features = ["full"] }
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+dotenvy = "0.15"

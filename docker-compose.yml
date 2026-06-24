@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER:     hermit
+      POSTGRES_PASSWORD: hermit
+      POSTGRES_DB:       hermit_gateway
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hermit"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Query/serve layer over the indexed data. Point the gateway's upstream_url here.
+  postgrest:
+    image: postgrest/postgrest:v12.2.3
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: postgres://hermit:hermit@postgres:5432/hermit_gateway
+      PGRST_DB_ANON_ROLE: hermit
+    ports:
+      - "3000:3000"
+
+  hermit-gateway:
+    build:
+      context: .
+      target: gateway
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GATEWAY_CONFIG: /app/config.toml
+      RUST_LOG:       hermit_gateway=info,horizon_core=info
+    volumes:
+      - ./gateway.toml:/app/config.toml:ro
+    ports:
+      - "8090:8090"
+
+  # The indexer runs the Substrate -> Handler -> Sink pipeline. By default it uses a mock
+  # substrate + stdout sink; wire a real substrate and a Postgres sink, then enable here.
+  hermit-indexer:
+    build:
+      context: .
+      target: indexer
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      RUST_LOG: hermit_indexer=info
+    profiles: ["indexer"]
+
+volumes:
+  pgdata:

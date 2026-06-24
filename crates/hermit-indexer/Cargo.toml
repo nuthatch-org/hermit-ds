@@ -1,0 +1,20 @@
+[package]
+name = "hermit-indexer"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "Hermit Data Service indexer — Substrate -> Handler -> Sink runtime."
+
+[[bin]]
+name = "hermit-indexer"
+path = "src/main.rs"
+
+[dependencies]
+hermit-core = { path = "../hermit-core" }
+tokio = { version = "1", features = ["full"] }
+anyhow = "1"
+futures = "0.3"
+async-stream = "0.3"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+dotenvy = "0.15"

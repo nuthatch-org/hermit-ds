@@ -1,0 +1,37 @@
+# Hermit Data Service gateway configuration.
+# Copy to gateway.toml and fill in real values. Load path via $GATEWAY_CONFIG.
+
+[server]
+host = "0.0.0.0"
+port = 8090
+
+[indexer]
+service_provider_address = "0x0000000000000000000000000000000000000000"
+operator_private_key = "0x0000000000000000000000000000000000000000000000000000000000000000"
+
+[tap]
+data_service_address = "0x0000000000000000000000000000000000000000"
+authorized_senders = []
+eip712_domain_name = "GraphTallyCollector"
+eip712_chain_id = 421614
+eip712_verifying_contract = "0xacC71844EF6beEF70106ABe6E51013189A1f3738"
+max_receipt_age_ns = 30000000000
+# aggregator_url = "http://localhost:7610"
+aggregation_interval_secs = 60
+
+[backend]
+# The query/serve layer over the indexed data. PostgREST over the sink's Postgres is a
+# common choice; point this at whatever exposes your indexed entities as HTTP.
+upstream_url = "http://127.0.0.1:3000"
+
+[database]
+url = "postgres://hermit:hermit@localhost:5432/hermit_gateway"
+
+[collector]
+arbitrum_rpc_url = "https://sepolia-rollup.arbitrum.io/rpc"
+collect_interval_secs = 3600
+min_collect_value = "0"
+
+[rate_limit]
+requests_per_second = 20
+burst_size = 40

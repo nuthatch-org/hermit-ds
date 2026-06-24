@@ -1,0 +1,10 @@
+[package]
+name = "hermit-core"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "Core pipeline traits + types for Hermit Data Service (Substrate -> Handler -> Sink)."
+
+[dependencies]
+futures = "0.3"
+anyhow = "1"
